@@ -3,7 +3,7 @@ var path = require("path");
 module.exports = {
   entry: {
     app: [
-      './src/index.bs.js'
+      './lib/es6/src/index.bs.js'
     ],
   },
 

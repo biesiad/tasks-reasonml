@@ -20,6 +20,8 @@
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
+    "bs-fetch": "^0.2.0",
+    "bs-json": "^1.0.0",
     "bs-platform": "^2.1.0",
     "css-loader": "^0.28.7",
     "file-loader": "^0.11.2",

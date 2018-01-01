@@ -1,5 +1,7 @@
-[%bs.raw {| require('./index.html') |}];
+[%bs.raw {| require('../../../public/index.html') |}];
 
-[%bs.raw {| require('./index.scss') |}];
+[%bs.raw {| require('font-awesome/css/font-awesome.css') |}];
 
-ReactDOMRe.renderToElementWithId(<Page message="Hello!" />, "app");
+[%bs.raw {| require('../../../public/index.scss') |}];
+
+ReactDOMRe.renderToElementWithId(<App />, "app");
