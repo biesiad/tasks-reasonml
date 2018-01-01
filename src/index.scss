@@ -1,0 +1,131 @@
+$white: #FFFFFF;
+$off-white: #F5F7F9;
+$primary: #61C796;
+$secondary: #909FB2;
+$success: #75DB9E;
+$error: #DB759E;
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: $off-white;
+  font-family: Lato, Helvetica, sans-serif;
+  color: #36495F;
+  font-size: 16px;
+}
+
+.container {
+  width: 800px;
+  margin: 30px auto;
+}
+
+.header {
+  height: 70px;
+  background-color: #2E3E51;
+}
+
+.button {
+  display: inline-block;
+  padding: 12px 14px;
+  background-color: $secondary;
+  border-radius: 5px;
+  border: 0;
+  color: $off-white;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+.button:disabled {
+  background-color: lighten($secondary, 20%);
+}
+
+.button-primary {
+  background-color: $primary;
+  color: $off-white;
+}
+
+.button-primary:disabled {
+  background-color: lighten($primary, 20%);
+}
+
+
+.task {
+  width: 100%;
+  border-radius: 5px;
+  padding: 20px;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+  box-shadow: 0px 1px 4px 1px rgba(100, 100, 100, .1);
+  background-color: #FFFFFF;
+  min-height: 200px;
+  position: relative;
+}
+
+.task-input {
+  width: 95%;
+  border: 0;
+  padding: 3px;
+  box-sizing: border-box;
+  background-color: $white;
+  font-size: 14px;
+  font-weight: 400;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #8599AA;
+}
+
+.task-delete {
+  font-size: 23px;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  color: $secondary;
+}
+
+.subheader h1 {
+  display: inline-block;
+}
+
+.subheader-buttons {
+  padding-top: 10px;
+  float: right;
+}
+
+
+.alerts {
+  position: fixed;
+  bottom: 100px;
+  right: 200px;
+}
+
+.alert {
+  border-radius: 5px;
+  border: 1px solid;
+  margin-bottom: 10px;
+  padding: 18px 20px 16px;
+  width: 400px;
+}
+
+.alert-success {
+  color: $success;
+  border-color: $success;
+  background-color: #F7FFFB;
+}
+
+.alert-error {
+  color: $error;
+  border-color: $error;
+  background-color: #FFF7FB;
+}
+
+.alert-close {
+  float: right;
+  margin-left: 30px;
+}
+
+.loader {
+  width: 100% !important;
+  display: block;
+  margin-top: 150px;
+  color: $white;
+}
