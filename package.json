@@ -2,12 +2,10 @@
   "name": "tasks-reasonml-react",
   "version": "0.1.0",
   "scripts": {
-    "build": "bsb -make-world",
-    "start": "bsb -make-world -w",
-    "clean": "bsb -clean-world",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "webpack": "webpack -w",
-    "webpack-server": "webpack-dev-server --port 4000 --hot --inline --info false --colors"
+    "build": "bsb -make-world && webpack",
+    "start-webpack": "webpack-dev-server --port 4000 --hot --inline --info false --colors",
+    "start-bsb": "bsb -make-world -w",
+    "clean-bsb": "bsb -clean-world"
   },
   "keywords": [
     "BuckleScript"
@@ -17,7 +15,6 @@
   "dependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "bs-fetch": "^0.2.0",
@@ -30,10 +27,7 @@
     "node-sass": "^4.7.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-redux": "^5.0.6",
     "reason-react": "^0.3.0",
-    "redux": "^3.7.2",
-    "redux-thunk": "^2.2.0",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.18.2",
     "url-loader": "^0.5.9",
