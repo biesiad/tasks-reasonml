@@ -7,17 +7,6 @@ type state = {
   isSaving: bool
 };
 
-let newTask = () : Types.task => {
-  id: [%bs.raw {| (new Date()).getTime() |}],
-  title: ""
-};
-
-let removeTask = (id: float, tasks) =>
-  List.filter((task: Types.task) => task.id != id, tasks);
-
-let updateTask = (id, title, tasks) =>
-  List.map((t: Types.task) => t.id == id ? {...t, title} : t, tasks);
-
 let renderTaskItem = (self: ReasonReact.self('a, 'b, 'c), task: Types.task) =>
   <TaskItem
     key=(string_of_float(task.id))
@@ -33,11 +22,6 @@ let renderTaskItem = (self: ReasonReact.self('a, 'b, 'c), task: Types.task) =>
       )
     )
   />;
-
-let newAlert = (content) : Types.alert => {
-  id: [%bs.raw {| (new Date()).getTime() |}],
-  content
-};
 
 let renderAlert = (self: ReasonReact.self('a, 'b, 'c), alert) =>
   <Alert
@@ -65,11 +49,27 @@ let make = (_children) => {
   reducer: (action, state) =>
     switch action {
     | Actions.AddTask =>
-      ReasonReact.Update({...state, tasks: [newTask(), ...state.tasks]})
+      ReasonReact.Update({
+        ...state,
+        tasks: [
+          {id: [%bs.raw {| (new Date()).getTime() |}], title: ""},
+          ...state.tasks
+        ]
+      })
     | Actions.UpdateTask(id, title) =>
-      ReasonReact.Update({...state, tasks: updateTask(id, title, state.tasks)})
+      ReasonReact.Update({
+        ...state,
+        tasks:
+          List.map(
+            (t: Types.task) => t.id == id ? {...t, title} : t,
+            state.tasks
+          )
+      })
     | Actions.RemoveTask(id) =>
-      ReasonReact.Update({...state, tasks: removeTask(id, state.tasks)})
+      ReasonReact.Update({
+        ...state,
+        tasks: List.filter((task: Types.task) => task.id != id, state.tasks)
+      })
     | Actions.SaveTasks =>
       ReasonReact.UpdateWithSideEffects(
         {...state, isSaving: true},
@@ -84,7 +84,10 @@ let make = (_children) => {
     | Actions.ShowAlert(content) =>
       ReasonReact.Update({
         ...state,
-        alerts: [newAlert(content), ...state.alerts]
+        alerts: [
+          {id: [%bs.raw {| (new Date()).getTime() |}], content},
+          ...state.alerts
+        ]
       })
     | Actions.CloseAlert(id) =>
       ReasonReact.Update({
