@@ -4,7 +4,7 @@
     "react-jsx" : 2
   },
   "sources": [
-    "src"
+    "src", "public"
   ],
   "package-specs": [{
     "module": "es6",
