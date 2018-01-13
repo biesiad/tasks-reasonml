@@ -2,10 +2,20 @@ type state = {
   savedTasks: list(Types.task),
   tasks: list(Types.task),
   requestStatus: Types.requestStatus,
-  alerts: list(Types.alert),
   isLoading: bool,
-  isSaving: bool
+  isSaving: bool,
+  alerts: list(Types.alert)
 };
+
+let alertReducer = (action: Actions.alertAction, state) =>
+  switch action {
+  | Actions.ShowAlert(content) => [
+      ({id: [%bs.raw {| (new Date()).getTime() |}], content}: Types.alert),
+      ...state
+    ]
+  | Actions.CloseAlert(id) =>
+    List.filter((alert: Types.alert) => alert.id != id, state)
+  };
 
 let renderTaskItem = (self: ReasonReact.self('a, 'b, 'c), task: Types.task) =>
   <TaskItem
@@ -26,7 +36,11 @@ let renderTaskItem = (self: ReasonReact.self('a, 'b, 'c), task: Types.task) =>
 let renderAlert = (self: ReasonReact.self('a, 'b, 'c), alert) =>
   <Alert
     alert
-    onHide=(self.reduce((_event) => Actions.CloseAlert(alert.id)))
+    onHide=(
+      self.reduce(
+        (_event) => Actions.AlertAction(Actions.CloseAlert(alert.id))
+      )
+    )
   />;
 
 let saveDisabled = (state) =>
@@ -46,8 +60,13 @@ let make = (_children) => {
     isLoading: true,
     isSaving: false
   },
-  reducer: (action, state) =>
+  reducer: (action: Actions.action, state) =>
     switch action {
+    | Actions.AlertAction(action) =>
+      ReasonReact.Update({
+        ...state,
+        alerts: alertReducer(action, state.alerts)
+      })
     | Actions.AddTask =>
       ReasonReact.Update({
         ...state,
@@ -81,20 +100,6 @@ let make = (_children) => {
             )
         )
       )
-    | Actions.ShowAlert(content) =>
-      ReasonReact.Update({
-        ...state,
-        alerts: [
-          {id: [%bs.raw {| (new Date()).getTime() |}], content},
-          ...state.alerts
-        ]
-      })
-    | Actions.CloseAlert(id) =>
-      ReasonReact.Update({
-        ...state,
-        alerts:
-          List.filter((alert: Types.alert) => alert.id != id, state.alerts)
-      })
     | Actions.TasksLoadResponse(json) =>
       switch (Api.decodeTasks(json)) {
       | Some(tasks) =>
@@ -111,7 +116,10 @@ let make = (_children) => {
           (
             (self) =>
               self.reduce(
-                (_) => Actions.ShowAlert(Error("Couldn't load tasks")),
+                (_) =>
+                  Actions.AlertAction(
+                    Actions.ShowAlert(Error("Couldn't load tasks"))
+                  ),
                 ()
               )
           )
@@ -124,7 +132,10 @@ let make = (_children) => {
           (
             (self) =>
               self.reduce(
-                (_) => Actions.ShowAlert(Types.Success("Tasks saved")),
+                (_) =>
+                  Actions.AlertAction(
+                    Actions.ShowAlert(Types.Success("Tasks saved"))
+                  ),
                 ()
               )
           )
@@ -135,7 +146,10 @@ let make = (_children) => {
           (
             (self) =>
               self.reduce(
-                (_) => Actions.ShowAlert(Types.Error("Can't save tasks")),
+                (_) =>
+                  Actions.AlertAction(
+                    Actions.ShowAlert(Types.Error("Can't save tasks"))
+                  ),
                 ()
               )
           )
