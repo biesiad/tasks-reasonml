@@ -21,15 +21,15 @@ let renderTaskItem = (self: ReasonReact.self('a, 'b, 'c), task: Types.task) =>
   <TaskItem
     key=(string_of_float(task.id))
     title=task.title
-    onRemove=(self.reduce((_) => Actions.RemoveTask(task.id)))
+    onRemove=((_) => self.send(Actions.RemoveTask(task.id)))
     onChange=(
-      self.reduce(
-        (e) =>
+      (e) =>
+        self.send(
           Actions.UpdateTask(
             task.id,
             ReactDOMRe.domElementToObj(ReactEventRe.Form.target(e))##value
           )
-      )
+        )
     )
   />;
 
@@ -37,9 +37,7 @@ let renderAlert = (self: ReasonReact.self('a, 'b, 'c), alert) =>
   <Alert
     alert
     onHide=(
-      self.reduce(
-        (_event) => Actions.AlertAction(Actions.CloseAlert(alert.id))
-      )
+      (_event) => self.send(Actions.AlertAction(Actions.CloseAlert(alert.id)))
     )
   />;
 
@@ -96,7 +94,7 @@ let make = (_children) => {
           (self) =>
             Api.onSave(
               self.state.tasks,
-              self.reduce((r) => Actions.TasksSaveResponse(r))
+              (r) => self.send(Actions.TasksSaveResponse(r))
             )
         )
       )
@@ -115,12 +113,10 @@ let make = (_children) => {
           {...state, isLoading: false},
           (
             (self) =>
-              self.reduce(
-                (_) =>
-                  Actions.AlertAction(
-                    Actions.ShowAlert(Error("Couldn't load tasks"))
-                  ),
-                ()
+              self.send(
+                Actions.AlertAction(
+                  Actions.ShowAlert(Error("Couldn't load tasks"))
+                )
               )
           )
         )
@@ -131,12 +127,10 @@ let make = (_children) => {
           {...state, savedTasks: state.tasks, isSaving: false},
           (
             (self) =>
-              self.reduce(
-                (_) =>
-                  Actions.AlertAction(
-                    Actions.ShowAlert(Types.Success("Tasks saved"))
-                  ),
-                ()
+              self.send(
+                Actions.AlertAction(
+                  Actions.ShowAlert(Types.Success("Tasks saved"))
+                )
               )
           )
         )
@@ -145,12 +139,10 @@ let make = (_children) => {
           {...state, isSaving: false},
           (
             (self) =>
-              self.reduce(
-                (_) =>
-                  Actions.AlertAction(
-                    Actions.ShowAlert(Types.Error("Can't save tasks"))
-                  ),
-                ()
+              self.send(
+                Actions.AlertAction(
+                  Actions.ShowAlert(Types.Error("Can't save tasks"))
+                )
               )
           )
         )
@@ -165,12 +157,12 @@ let make = (_children) => {
           <div className="subheader-buttons">
             <button
               className="button"
-              onClick=(self.reduce((_event) => Actions.AddTask))>
+              onClick=((_event) => self.send(Actions.AddTask))>
               (ReasonReact.stringToElement("Add Task"))
             </button>
             <button
               className="button button-primary"
-              onClick=(self.reduce((_event) => Actions.SaveTasks))
+              onClick=((_event) => self.send(Actions.SaveTasks))
               disabled=(saveDisabled(self.state))>
               (ReasonReact.stringToElement("Save"))
             </button>
@@ -193,7 +185,7 @@ let make = (_children) => {
       </div>
     </div>,
   didMount: (self) => {
-    Api.onLoad(self.reduce((json) => Actions.TasksLoadResponse(json)));
+    Api.onLoad((json) => self.send(Actions.TasksLoadResponse(json)));
     ReasonReact.NoUpdate
   }
 };
