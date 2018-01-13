@@ -13,5 +13,6 @@ type alert = {
 
 type task = {
   title: string,
-  id: float
+  id: float,
+  focus: bool
 };

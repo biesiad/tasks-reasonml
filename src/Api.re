@@ -2,7 +2,8 @@ let tasksUrl = "http://cfassignment.herokuapp.com/greg/tasks";
 
 let decodeTask = (json: Js.Json.t) : Types.task => {
   title: Json.Decode.field("title", Json.Decode.string, json),
-  id: Json.Decode.field("id", Json.Decode.float, json)
+  id: Json.Decode.field("id", Json.Decode.float, json),
+  focus: false
 };
 
 let decodeTasks = (json: Js.Json.t) : option(list(Types.task)) =>

@@ -20,7 +20,7 @@ let alertReducer = (action: Actions.alertAction, state) =>
 let renderTaskItem = (self: ReasonReact.self('a, 'b, 'c), task: Types.task) =>
   <TaskItem
     key=(string_of_float(task.id))
-    title=task.title
+    task
     onRemove=((_) => self.send(Actions.RemoveTask(task.id)))
     onChange=(
       (e) =>
@@ -69,8 +69,11 @@ let make = (_children) => {
       ReasonReact.Update({
         ...state,
         tasks: [
-          {id: [%bs.raw {| (new Date()).getTime() |}], title: ""},
-          ...state.tasks
+          {id: [%bs.raw {| (new Date()).getTime() |}], title: "", focus: true},
+          ...List.map(
+               fun (t) => ({...t, focus: false}: Types.task),
+               state.tasks
+             )
         ]
       })
     | Actions.UpdateTask(id, title) =>
