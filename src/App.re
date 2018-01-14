@@ -93,63 +93,43 @@ let make = (_children) => {
     | Actions.SaveTasks =>
       ReasonReact.UpdateWithSideEffects(
         {...state, isSaving: true},
+        ((self) => Api.saveTasks(self.send, self.state.tasks))
+      )
+    | Actions.TasksLoadResponse(tasks) =>
+      ReasonReact.Update({
+        ...state,
+        tasks,
+        savedTasks: tasks,
+        isLoading: false
+      })
+    | Actions.TasksLoadResponseError(message) =>
+      ReasonReact.UpdateWithSideEffects(
+        {...state, isLoading: false},
         (
           (self) =>
-            Api.onSave(
-              self.state.tasks,
-              (r) => self.send(Actions.TasksSaveResponse(r))
+            self.send(Actions.AlertAction(Actions.ShowAlert(Error(message))))
+        )
+      )
+    | Actions.TasksSaveResponse =>
+      ReasonReact.UpdateWithSideEffects(
+        {...state, savedTasks: state.tasks, isSaving: false},
+        (
+          (self) =>
+            self.send(
+              Actions.AlertAction(
+                Actions.ShowAlert(Types.Success("Tasks saved"))
+              )
             )
         )
       )
-    | Actions.TasksLoadResponse(json) =>
-      switch (Api.decodeTasks(json)) {
-      | Some(tasks) =>
-        ReasonReact.Update({
-          ...state,
-          tasks,
-          savedTasks: tasks,
-          isLoading: false
-        })
-      | None => ReasonReact.NoUpdate
-      | exception (Json.Decode.DecodeError(_messsage)) =>
-        ReasonReact.UpdateWithSideEffects(
-          {...state, isLoading: false},
-          (
-            (self) =>
-              self.send(
-                Actions.AlertAction(
-                  Actions.ShowAlert(Error("Couldn't load tasks"))
-                )
-              )
-          )
+    | Actions.TasksSaveResponseError(message) =>
+      ReasonReact.UpdateWithSideEffects(
+        {...state, isSaving: false, isLoading: false},
+        (
+          (self) =>
+            self.send(Actions.AlertAction(Actions.ShowAlert(Error(message))))
         )
-      }
-    | Actions.TasksSaveResponse(response) =>
-      if (Fetch.Response.ok(response)) {
-        ReasonReact.UpdateWithSideEffects(
-          {...state, savedTasks: state.tasks, isSaving: false},
-          (
-            (self) =>
-              self.send(
-                Actions.AlertAction(
-                  Actions.ShowAlert(Types.Success("Tasks saved"))
-                )
-              )
-          )
-        )
-      } else {
-        ReasonReact.UpdateWithSideEffects(
-          {...state, isSaving: false},
-          (
-            (self) =>
-              self.send(
-                Actions.AlertAction(
-                  Actions.ShowAlert(Types.Error("Can't save tasks"))
-                )
-              )
-          )
-        )
-      }
+      )
     },
   render: (self) =>
     <div>
@@ -172,23 +152,19 @@ let make = (_children) => {
           </div>
         </div>
         (
-          ReasonReact.createDomElement(
-            "div",
-            ~props={"className": ""},
+          ReasonReact.arrayToElement(
             Array.of_list(List.map(renderTaskItem(self), self.state.tasks))
           )
         )
         (
-          ReasonReact.createDomElement(
-            "div",
-            ~props={"className": "alerts"},
+          ReasonReact.arrayToElement(
             Array.of_list(List.map(renderAlert(self), self.state.alerts))
           )
         )
       </div>
     </div>,
   didMount: (self) => {
-    Api.onLoad((json) => self.send(Actions.TasksLoadResponse(json)));
+    Api.loadTasks(self.send) |> ignore;
     ReasonReact.NoUpdate
   }
 };

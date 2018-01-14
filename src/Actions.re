@@ -8,5 +8,7 @@ type action =
   | UpdateTask(float, string)
   | RemoveTask(float)
   | SaveTasks
-  | TasksLoadResponse(Js.Json.t)
-  | TasksSaveResponse(Fetch.Response.t);
+  | TasksLoadResponse(list(Types.task))
+  | TasksLoadResponseError(string)
+  | TasksSaveResponse
+  | TasksSaveResponseError(string);
